@@ -7,3 +7,32 @@ const images = [
   { url: "https://picsum.photos/id/238/200/300" },
   { url: "https://picsum.photos/id/239/200/300" },
 ];
+
+
+function downloadImage(url) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = url;
+
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error(`Failed to load image from ${url}`));
+  });
+}
+function downloadAndDisplayImages() {
+
+	const imagePromises = images.map((imageObj) => downloadImage(imageObj.url));
+ Promise.all(imagePromises)
+    .then((downloadedImages) => {
+ 
+      output.innerHTML = '';
+		
+ downloadedImages.forEach((img) => {
+        output.appendChild(img);
+      });
+    })
+    .catch((error) => {
+      console.error("Error downloading images:", error);
+      output.innerHTML = `<p>Error downloading images: ${error.message}</p>`;
+    });
+}
+btn.addEventListener("click", downloadAndDisplayImages);
